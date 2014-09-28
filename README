@@ -1,0 +1,3 @@
+This project contains ancient Chinese books in plain text. 
+We also provide converters written in Go programming language to convert the
+books to other format like pdf.
