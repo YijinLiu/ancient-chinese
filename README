@@ -1,3 +1,31 @@
 This project contains ancient Chinese books in plain text. 
-We also provide converters written in Go programming language to convert the
+We provide converters written in Go programming language to convert the
 books to other format like pdf.
+
+Rules:
+1. All text files go under txt sub folder and Go code under go sub folder.
+2. Only a subset of ASCII characters are allowed in file names, including lowcase letters, numbers, - (dash) and . (dot).
+3. Use pinyin to replace Chinese character in file names. For example, "shiji" for "史记".
+   Use suffix like "-simplified" or "-traditional" to indicate that the text is in simplified or traditional Chinese.
+   Prefer ".txt" extension.
+   e.g.  shiji-simplified.txt shiji-traditional.txt
+4. All files are encoded with UTF8, W/O BOM byte.
+5. All Go code need to formated with gofmt.
+6. Every Go source file should have minimal comment explaining how to use the code.
+
+Format of text files:
+TITLE
+AUTHOR
+CHAPTER TITLE1
+CHAPTER TITLE2
+...
+<empty line>
+CHAPTER TITLE1
+CONTENT          // One line for each paragraph.
+....
+
+FAQs
+Q: Why use text files?
+A: Text files save disk space. Most importantly, it's easy to edit text files and we can use source control system to record the change history of files. We require minimal formating in the text files and use Tex to format the books for different devices.
+Q: Why use go?
+A: No special reason. The author would like to try this relatively new language, which is cool and very concise.
