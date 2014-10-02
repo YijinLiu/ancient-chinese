@@ -29,6 +29,23 @@ import (
 
 var fontName = flag.String("font-name", "SimSun", "The font name.")
 var fontSize = flag.Int("font-size", 16, "The font size. This default setting is for 9inch kindle.")
+var titleFontName = flag.String("title-font-name", "KaiTi", "The title font name.")
+
+func GetTitlePage(title, author string) string {
+	return fmt.Sprintf(
+		`\begin{titlepage}
+\begin{center}
+\vspace*{\fill}
+\CJKfamily{title}
+\textsc{\textbf{\huge %s}}\\[0.5cm]
+\CJKfamily{}
+\textsc{\large %s}\\[1.5cm]
+\textsc{\small \url{https://code.google.com/p/ancient-chinese}}\\
+{\today}
+\vspace*{\fill}
+\end{center}
+\end{titlepage}`, title, author)
+}
 
 func GetChapterStart(title string) string {
 	return fmt.Sprintf(
@@ -61,6 +78,7 @@ func ConvertToTex(input, output string) {
 	fmt.Fprintln(outputFile, `\usepackage{xeCJK}`)
 	fmt.Fprintln(outputFile, `\CJKspace`)
 	fmt.Fprintf(outputFile, "\\setCJKmainfont{%s}\n", *fontName)
+	fmt.Fprintf(outputFile, "\\setCJKfamilyfont{title}{%s}\n", *titleFontName)
 	fmt.Fprintln(outputFile, `\XeTeXlinebreaklocale "zh"`)
 	fmt.Fprintln(outputFile, `\XeTeXlinebreakskip 0pt plus 1pt`)
 	fmt.Fprintln(outputFile, `\setcounter{secnumdepth}{-1}`)
@@ -81,12 +99,10 @@ func ConvertToTex(input, output string) {
 		} else if len(title) == 0 {
 			title = line
 			log.Printf("Title: %s\n", title)
-			fmt.Fprintf(outputFile, "\\title{%s}\n", title)
 		} else if len(author) == 0 {
 			author = line
 			log.Printf("Author: %s\n", author)
-			fmt.Fprintf(outputFile, "\\author{%s}\n", author)
-			fmt.Fprintln(outputFile, `\maketitle`)
+			fmt.Fprintln(outputFile, GetTitlePage(title, author))
 		} else if len(chapters) == 0 {
 			for {
 				chapters = append(chapters, line)
