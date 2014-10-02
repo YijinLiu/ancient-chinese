@@ -1,4 +1,4 @@
-// This file contains code to convert text files to Tex.
+// This file contains code to convert text files to TeX.
 // See README for the format of the text files.
 //
 // Compile:
@@ -8,11 +8,13 @@
 //   bin/tex txt/shiji-simplified.txt
 // It generates a new file txt/shiji-simplified.tex
 //
-// Use xelatex to convert Tex to PDF.
-// You need at least the following packages to run xelatex:
-//     sudo apt-get install texlive-xetex texlive-lang-cjk cjk-latex
 // You probably need to change --font-name if you don't have SimSun in your system.
 // Run fc-list to find installed fonts. Refer to fc-cache about how to install new font.
+//
+// Use xelatex to convert TeX to PDF.
+// You need at least the following packages to run xelatex:
+//     sudo apt-get install texlive-xetex texlive-lang-cjk cjk-latex
+// Suggest to use https://www.tug.org/texlive/acquire-netinstall.html.
 
 package main
 
@@ -26,7 +28,14 @@ import (
 )
 
 var fontName = flag.String("font-name", "SimSun", "The font name.")
-var fontSize = flag.Int("font-size", 13, "The font size. This default setting is for 9inch kindle.")
+var fontSize = flag.Int("font-size", 16, "The font size. This default setting is for 9inch kindle.")
+
+func GetChapterStart(title string) string {
+	return fmt.Sprintf(
+		`\cleardoublepage
+\phantomsection
+\chapter{%s}`, title, title)
+}
 
 func ConvertToTex(input, output string) {
 	// Open input.
@@ -46,13 +55,20 @@ func ConvertToTex(input, output string) {
 	defer outputFile.Close()
 
 	// Ouput headers.
-	fmt.Fprintf(outputFile, "\\documentclass[%dpt,twoside,a4paper]{book}\n", *fontSize)
-	fmt.Fprintln(outputFile, "\\usepackage{xeCJK}")
-	fmt.Fprintln(outputFile, "\\CJKspace")
+	fmt.Fprintf(outputFile, "\\documentclass[fontsize=%dpt]{scrbook}\n", *fontSize)
+	fmt.Fprintln(outputFile, `\usepackage{hyperref}`)
+	fmt.Fprintln(outputFile, `\usepackage{indentfirst}`)
+	fmt.Fprintln(outputFile, `\usepackage{xeCJK}`)
+	fmt.Fprintln(outputFile, `\CJKspace`)
 	fmt.Fprintf(outputFile, "\\setCJKmainfont{%s}\n", *fontName)
-	fmt.Fprintln(outputFile, "\\setcounter{secnumdepth}{-1}")
-	fmt.Fprintln(outputFile, "\\setcounter{tocdepth}{0}")
-	fmt.Fprintln(outputFile, "\\begin{document}")
+	fmt.Fprintln(outputFile, `\XeTeXlinebreaklocale "zh"`)
+	fmt.Fprintln(outputFile, `\XeTeXlinebreakskip 0pt plus 1pt`)
+	fmt.Fprintln(outputFile, `\setcounter{secnumdepth}{-1}`)
+	fmt.Fprintln(outputFile, `\setcounter{tocdepth}{0}`)
+	fmt.Fprintln(outputFile, `\linespread{1.2}`)
+	fmt.Fprintln(outputFile, `\setlength{\parindent}{3em}`)
+	fmt.Fprintln(outputFile, `\sloppy`)
+	fmt.Fprintln(outputFile, `\begin{document}`)
 
 	var title string
 	var author string
@@ -70,7 +86,7 @@ func ConvertToTex(input, output string) {
 			author = line
 			log.Printf("Author: %s\n", author)
 			fmt.Fprintf(outputFile, "\\author{%s}\n", author)
-			fmt.Fprintln(outputFile, "\\maketitle")
+			fmt.Fprintln(outputFile, `\maketitle`)
 		} else if len(chapters) == 0 {
 			for {
 				chapters = append(chapters, line)
@@ -83,14 +99,14 @@ func ConvertToTex(input, output string) {
 				}
 			}
 			log.Printf("%d Chapters.\n", len(chapters))
-			fmt.Fprintln(outputFile, "\\tableofcontents")
+			fmt.Fprintln(outputFile, `\tableofcontents{}`)
 		} else {
 			if currentChapter < len(chapters) && strings.HasSuffix(line, chapters[currentChapter]) {
 				log.Printf("Chapter %d: %s\n", currentChapter, chapters[currentChapter])
 				if len(line) > len(chapters[currentChapter]) {
 					fmt.Fprintln(outputFile, "\\par\n"+line[0:len(line)-len(chapters[currentChapter])])
 				}
-				fmt.Fprintf(outputFile, "\\chapter{%s}\n", chapters[currentChapter])
+				fmt.Fprintln(outputFile, GetChapterStart(chapters[currentChapter]))
 				currentChapter++
 			} else {
 				fmt.Fprintln(outputFile, "\\par\n"+line)
@@ -98,7 +114,7 @@ func ConvertToTex(input, output string) {
 		}
 
 	}
-	fmt.Fprintln(outputFile, "\\end{document}")
+	fmt.Fprintln(outputFile, `"\end{document}`)
 }
 
 func main() {
