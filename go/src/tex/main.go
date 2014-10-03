@@ -28,8 +28,33 @@ import (
 )
 
 var fontName = flag.String("font-name", "SimSun", "The font name.")
-var fontSize = flag.Int("font-size", 16, "The font size. This default setting is for 9inch kindle.")
 var titleFontName = flag.String("title-font-name", "KaiTi", "The title font name.")
+var fontSize = flag.Int("font-size", 16, "The font size. This default setting is for 9inch kindle.")
+
+func GetLongtableDef() string {
+	return `\usepackage{longtable,tabulary}
+\makeatletter
+\def\ltabulary{%
+\def\endfirsthead{\\}%
+\def\endhead{\\}%
+\def\endfoot{\\}%
+\def\endlastfoot{\\}%
+\def\tabulary{%
+  \def\TY@final{%
+\def\endfirsthead{\LT@end@hd@ft\LT@firsthead}%
+\def\endhead{\LT@end@hd@ft\LT@head}%
+\def\endfoot{\LT@end@hd@ft\LT@foot}%
+\def\endlastfoot{\LT@end@hd@ft\LT@lastfoot}%
+\longtable}%
+  \let\endTY@final\endlongtable
+  \TY@tabular}%
+\dimen@\columnwidth
+\advance\dimen@-\LTleft
+\advance\dimen@-\LTright
+\tabulary\dimen@}
+\def\endltabulary{\endtabulary}
+\makeatother`
+}
 
 func GetTitlePage(title, author string) string {
 	return fmt.Sprintf(
@@ -75,6 +100,7 @@ func ConvertToTex(input, output string) {
 	fmt.Fprintf(outputFile, "\\documentclass[fontsize=%dpt]{scrbook}\n", *fontSize)
 	fmt.Fprintln(outputFile, `\usepackage{hyperref}`)
 	fmt.Fprintln(outputFile, `\usepackage{indentfirst}`)
+	fmt.Fprintln(outputFile, GetLongtableDef())
 	fmt.Fprintln(outputFile, `\usepackage{xeCJK}`)
 	fmt.Fprintln(outputFile, `\CJKspace`)
 	fmt.Fprintf(outputFile, "\\setCJKmainfont{%s}\n", *fontName)
@@ -92,6 +118,7 @@ func ConvertToTex(input, output string) {
 	var author string
 	var chapters []string
 	currentChapter := 0
+	const kTableMarker = "---"
 	for inputScanner.Scan() {
 		line := strings.TrimSpace(inputScanner.Text())
 		if len(line) == 0 {
@@ -116,21 +143,55 @@ func ConvertToTex(input, output string) {
 			}
 			log.Printf("%d Chapters.\n", len(chapters))
 			fmt.Fprintln(outputFile, `\tableofcontents{}`)
-		} else {
-			if currentChapter < len(chapters) && strings.HasSuffix(line, chapters[currentChapter]) {
-				log.Printf("Chapter %d: %s\n", currentChapter, chapters[currentChapter])
-				if len(line) > len(chapters[currentChapter]) {
-					fmt.Fprintln(outputFile, "\\par\n"+line[0:len(line)-len(chapters[currentChapter])])
+		} else if line == kTableMarker {
+			var tableRows []string
+			for inputScanner.Scan() {
+				line = strings.TrimSpace(inputScanner.Text())
+				if line == kTableMarker {
+					break
 				}
-				fmt.Fprintln(outputFile, GetChapterStart(chapters[currentChapter]))
-				currentChapter++
-			} else {
-				fmt.Fprintln(outputFile, "\\par\n"+line)
+				tableRows = append(tableRows, line)
 			}
+			if len(tableRows) == 0 {
+				continue
+			}
+			fmt.Fprintln(outputFile, `\par`)
+			fmt.Fprintln(outputFile, `\begin{scriptsize}`)
+			// Allow line break after quote, colon.
+			fmt.Fprintln(outputFile, "\\xeCJKDeclareCharClass{CJK}{`：,`“}")
+			// Allow line break before comma, period.
+			fmt.Fprintln(outputFile, "\\xeCJKDeclareCharClass{CJK}{`，,`、,`。,`”}")
+			// Allow line break before numbers.
+			fmt.Fprintln(outputFile, "\\xeCJKDeclareCharClass{CJK}{`0,`1,`2,`3,`4,`5,`6,`7,`8,`9}")
+			numColumns := -1
+			for _, row := range tableRows {
+				columns := strings.Split(row, "|")
+				if numColumns == -1 {
+					numColumns = len(columns)
+					fmt.Fprintf(outputFile, "\\begin{ltabulary}{%s|}\n", strings.Repeat("|L", numColumns))
+					fmt.Fprintln(outputFile, `\hline`)
+				} else if numColumns != len(columns) {
+					log.Fatalf("'%s' should have %d columns", row, numColumns)
+				}
+				fmt.Fprintf(outputFile, "%s \\\\ \\hline\n", strings.Join(columns, " & "))
+			}
+			fmt.Fprintln(outputFile, `\end{ltabulary}`)
+			fmt.Fprintln(outputFile, `\xeCJKsetup{CheckSingle=true}`)
+			fmt.Fprintln(outputFile, "\\xeCJKDeclareCharClass{Default}{`0,`1,`2,`3,`4,`5,`6,`7,`8,`9}")
+			fmt.Fprintln(outputFile, "\\xeCJKDeclareCharClass{FullRight}{`，,`、,`。,`”}")
+			fmt.Fprintln(outputFile, "\\xeCJKDeclareCharClass{FullLeft}{`：,`“}")
+			fmt.Fprintln(outputFile, `\end{scriptsize}`)
+			fmt.Fprintln(outputFile, `\par`)
+		} else if currentChapter < len(chapters) && line == chapters[currentChapter] {
+			log.Printf("Chapter %d: %s\n", currentChapter, line)
+			fmt.Fprintln(outputFile, GetChapterStart(line))
+			currentChapter++
+		} else {
+			fmt.Fprintln(outputFile, "\\par\n"+line)
 		}
 
 	}
-	fmt.Fprintln(outputFile, `"\end{document}`)
+	fmt.Fprintln(outputFile, `\end{document}`)
 }
 
 func main() {
