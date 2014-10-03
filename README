@@ -2,6 +2,7 @@ This project contains ancient Chinese books in plain text.
 We provide converters written in Go programming language to convert the
 books to other format like pdf.
 
+
 Rules:
 1. All text files go under txt sub folder and Go code under go sub folder.
 2. Only a subset of ASCII characters are allowed in file names, including lowcase letters, numbers, - (dash) and . (dot).
@@ -13,6 +14,7 @@ Rules:
 5. All Go code need to formated with gofmt.
 6. Every Go source file should have minimal comment explaining how to use the code.
 
+
 Format of text files:
 TITLE
 AUTHOR
@@ -23,6 +25,17 @@ CHAPTER TITLE2
 CHAPTER TITLE1
 CONTENT          // One line for each paragraph.
 ....
+
+Table format:
+---
+Column1|Column2|Column3
+Column1|Column2|Column3
+....
+---
+Note:
+1. Tables start and end with "---".
+2. Every row must have the same number of "|".
+
 
 FAQs
 Q: Why use text files?
