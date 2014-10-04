@@ -72,11 +72,36 @@ func GetTitlePage(title, author string) string {
 \end{titlepage}`, title, author)
 }
 
-func GetChapterStart(title string) string {
-	return fmt.Sprintf(
-		`\cleardoublepage
-\phantomsection
-\chapter{%s}`, title, title)
+var kTitleNames = [...]string{
+	"part",
+	"chapter",
+	"section",
+	"subsection",
+	"subsubsection",
+	"subsubsubsection",
+	"paragraph",
+	"subparagraph",
+}
+
+func GetChapterStart(title string) (start, titleName, outTitle string) {
+	numOfPlus := 0
+	for numOfPlus < len(title) && title[numOfPlus] == '+' {
+		numOfPlus++
+	}
+	if numOfPlus < 1 || numOfPlus > len(kTitleNames) {
+		log.Fatalf("Unknown title: %s.", title)
+	}
+	outTitle = title[numOfPlus:]
+	if numOfPlus == 2 {
+		start = `\cleardoublepage`
+	} else {
+		start = ""
+	}
+	titleName = kTitleNames[numOfPlus-1]
+	start += fmt.Sprintf(
+		`\phantomsection
+\%s{%s}`, titleName, outTitle)
+	return
 }
 
 func ConvertToTex(input, output string) {
@@ -116,9 +141,8 @@ func ConvertToTex(input, output string) {
 
 	var title string
 	var author string
-	var chapters []string
-	currentChapter := 0
 	const kTableMarker = "---"
+	var chapterCounters = make(map[string]int)
 	for inputScanner.Scan() {
 		line := strings.TrimSpace(inputScanner.Text())
 		if len(line) == 0 {
@@ -130,18 +154,6 @@ func ConvertToTex(input, output string) {
 			author = line
 			log.Printf("Author: %s\n", author)
 			fmt.Fprintln(outputFile, GetTitlePage(title, author))
-		} else if len(chapters) == 0 {
-			for {
-				chapters = append(chapters, line)
-				if !inputScanner.Scan() {
-					break
-				}
-				line = strings.TrimSpace(inputScanner.Text())
-				if len(line) == 0 {
-					break
-				}
-			}
-			log.Printf("%d Chapters.\n", len(chapters))
 			fmt.Fprintln(outputFile, `\tableofcontents{}`)
 		} else if line == kTableMarker {
 			var tableRows []string
@@ -182,10 +194,11 @@ func ConvertToTex(input, output string) {
 			fmt.Fprintln(outputFile, "\\xeCJKDeclareCharClass{FullLeft}{`：,`“}")
 			fmt.Fprintln(outputFile, `\end{scriptsize}`)
 			fmt.Fprintln(outputFile, `\par`)
-		} else if currentChapter < len(chapters) && line == chapters[currentChapter] {
-			log.Printf("Chapter %d: %s\n", currentChapter, line)
-			fmt.Fprintln(outputFile, GetChapterStart(line))
-			currentChapter++
+		} else if line[0] == '+' {
+			start, name, title := GetChapterStart(line)
+			chapterCounters[name]++
+			fmt.Printf("%s %d: %s\n", name, chapterCounters[name], title)
+			fmt.Fprintln(outputFile, start)
 		} else {
 			fmt.Fprintln(outputFile, "\\par\n"+line)
 		}

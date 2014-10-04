@@ -18,12 +18,10 @@ Rules:
 Format of text files:
 TITLE
 AUTHOR
-CHAPTER TITLE1
-CHAPTER TITLE2
-...
-<empty line>
-CHAPTER TITLE1
+++CHAPTER1       // Num of '+' determines the type of structure, the more the smaller. Max 7.
 CONTENT          // One line for each paragraph.
+....
+++CHAPTER2
 ....
 
 Table format:
