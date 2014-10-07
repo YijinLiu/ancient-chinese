@@ -64,12 +64,10 @@ func GetTitlePage(title, author string) string {
 		`\begin{titlepage}
 \begin{center}
 \vspace*{\fill}
-\CJKfamily{title}
-\textsc{\textbf{\huge %s}}\\[0.5cm]
-\CJKfamily{}
-\textsc{\large %s}\\[1.5cm]
-\textsc{\small \url{https://code.google.com/p/ancient-chinese}}\\
-{\today}
+\emph{\textbf{\Huge{\kaiti %s}}}\\[0.5cm]
+{\normalsize %s}\\[1.5cm]
+{\small\url{https://code.google.com/p/ancient-chinese}}\\
+{\small\today}
 \vspace*{\fill}
 \end{center}
 \end{titlepage}`, title, author)
@@ -132,7 +130,7 @@ func ConvertToTex(input, output string) {
 	fmt.Fprintln(outputFile, `\usepackage{xeCJK}`)
 	fmt.Fprintln(outputFile, `\CJKspace`)
 	fmt.Fprintf(outputFile, "\\setCJKmainfont[FallBack=%s]{%s}\n", *fallbackFontName, *fontName)
-	fmt.Fprintf(outputFile, "\\setCJKfamilyfont{title}{%s}\n", *titleFontName)
+	fmt.Fprintf(outputFile, "\\newCJKfontfamily[kai]\\kaiti{%s}\n", *titleFontName)
 	fmt.Fprintln(outputFile, `\XeTeXlinebreaklocale "zh"`)
 	fmt.Fprintln(outputFile, `\XeTeXlinebreakskip 0pt plus 1pt`)
 	fmt.Fprintln(outputFile, `\setcounter{secnumdepth}{-1}`)
