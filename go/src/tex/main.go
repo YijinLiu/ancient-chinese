@@ -8,8 +8,10 @@
 //   bin/tex txt/shiji-simplified.txt
 // It generates a new file txt/shiji-simplified.tex
 //
-// You probably need to change --font-name if you don't have SimSun in your system.
-// Run fc-list to find installed fonts. Refer to fc-cache about how to install new font.
+// You probably need to download the free super-big font HanaMin(花園明朝)
+// from http://www.zdic.net/appendix/f18.htm
+// Please refer to fc-cache about how to install new font.
+// Run fc-list to find installed fonts.
 //
 // Use xelatex to convert TeX to PDF.
 // You need at least the following packages to run xelatex:
@@ -27,7 +29,8 @@ import (
 	"strings"
 )
 
-var fontName = flag.String("font-name", "SimSun", "The font name.")
+var fontName = flag.String("font-name", "HanaMinA", "The font name.")
+var fallbackFontName = flag.String("fallback-font-name", "HanaMinB", "The fallback font name, for rare words not covered by the default font.")
 var titleFontName = flag.String("title-font-name", "KaiTi", "The title font name.")
 var fontSize = flag.Int("font-size", 16, "The font size. This default setting is for 9inch kindle.")
 
@@ -128,7 +131,7 @@ func ConvertToTex(input, output string) {
 	fmt.Fprintln(outputFile, GetLongtableDef())
 	fmt.Fprintln(outputFile, `\usepackage{xeCJK}`)
 	fmt.Fprintln(outputFile, `\CJKspace`)
-	fmt.Fprintf(outputFile, "\\setCJKmainfont{%s}\n", *fontName)
+	fmt.Fprintf(outputFile, "\\setCJKmainfont[FallBack=%s]{%s}\n", *fallbackFontName, *fontName)
 	fmt.Fprintf(outputFile, "\\setCJKfamilyfont{title}{%s}\n", *titleFontName)
 	fmt.Fprintln(outputFile, `\XeTeXlinebreaklocale "zh"`)
 	fmt.Fprintln(outputFile, `\XeTeXlinebreakskip 0pt plus 1pt`)
