@@ -124,6 +124,7 @@ func ConvertToTex(input, output string) {
 
 	// Ouput headers.
 	fmt.Fprintf(outputFile, "\\documentclass[fontsize=%dpt]{scrbook}\n", *fontSize)
+	fmt.Fprintln(outputFile, `\KOMAoptions{twoside=false}`)
 	fmt.Fprintln(outputFile, `\usepackage{hyperref}`)
 	fmt.Fprintln(outputFile, `\usepackage{indentfirst}`)
 	fmt.Fprintln(outputFile, GetLongtableDef())
