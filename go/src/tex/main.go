@@ -128,6 +128,7 @@ func ConvertToTex(input, output string) {
 	fmt.Fprintln(outputFile, `\usepackage{indentfirst}`)
 	fmt.Fprintln(outputFile, GetLongtableDef())
 	fmt.Fprintln(outputFile, `\usepackage{xeCJK}`)
+	fmt.Fprintln(outputFile, `\xeCJKsetup{AutoFallBack}`)
 	fmt.Fprintln(outputFile, `\CJKspace`)
 	fmt.Fprintf(outputFile, "\\setCJKmainfont[FallBack=%s]{%s}\n", *fallbackFontName, *fontName)
 	fmt.Fprintf(outputFile, "\\newCJKfontfamily[kai]\\kaiti{%s}\n", *titleFontName)
