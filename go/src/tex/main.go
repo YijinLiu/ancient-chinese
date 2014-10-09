@@ -22,6 +22,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"flag"
 	"fmt"
 	"log"
@@ -114,6 +115,36 @@ func ParseTitleLine(title string) (sectionType int, start, outTitle string) {
 	sectionType = numOfPlus-1
 	start += `\phantomsection`
 	return
+}
+
+var kCommentStart = "（"
+var kCommentEnd = "）"
+
+func ReplaceCommentWithScript(text string) string {
+	var buffer bytes.Buffer
+	for {
+		start := strings.Index(text, kCommentStart)
+		if start == -1 {
+			break
+		}
+		end := strings.Index(text, kCommentEnd)
+		if start > 0 {
+			buffer.WriteString(text[:start])
+		}
+		start += len(kCommentStart)
+		if start >= end {
+			log.Fatalf("Invalid comment: %s\n", text)
+		}
+		buffer.WriteString(fmt.Sprintf(`{\scriptsize %s}`, text[start:end]))
+		text = text[end + len(kCommentEnd):]
+		if len(text) == 0 {
+			break
+		}
+	}
+	if len(text) > 0 {
+		buffer.WriteString(text)
+	}
+	return buffer.String()
 }
 
 func ConvertToTex(input, output string) {
@@ -225,9 +256,9 @@ func ConvertToTex(input, output string) {
 				sectionTypeToCount[i] = 0
 			}
 			fmt.Printf("%s %d: %s\n", sectionTypeName, sectionTypeToCount[sectionType], title)
-			fmt.Fprintf(outputFile, "%s\n\\%s{%s}\n", start, sectionTypeName, title)
+			fmt.Fprintf(outputFile, "%s\n\\%s{%s}\n", start, sectionTypeName, ReplaceCommentWithScript(title))
 		} else {
-			fmt.Fprintln(outputFile, "\\par\n"+line)
+			fmt.Fprintln(outputFile, "\\par\n" + ReplaceCommentWithScript(line))
 		}
 
 	}
