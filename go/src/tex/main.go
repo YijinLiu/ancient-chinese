@@ -73,7 +73,7 @@ func GetTitlePage(title, author string) string {
 \end{titlepage}`, title, author)
 }
 
-var kTitleNames = [...]string{
+var kSectionNames = [...]string{
 	"part",
 	"chapter",
 	"section",
@@ -84,12 +84,25 @@ var kTitleNames = [...]string{
 	"subparagraph",
 }
 
-func GetChapterStart(title string) (start, titleName, outTitle string) {
+// "title" is like
+// 1) "+XXX" is part.
+// 2) "++XXX" is chapter.
+// 3) "+++XXX" is section.
+// 4) "++++XXX" is subsection.
+// 5) "+++++XXX" is subsubsection.
+// 6) "++++++XXX" is subsubsubsection.
+// 7) "+++++++XXX" is paragraph.
+// 8) "++++++++XXX" is subparagraph.
+// Returns
+//   "start" the tex script to start the section.
+//   "sectionType" the section type, 0..7.
+//   "outTitle" the section title. (XXX)
+func ParseTitleLine(title string) (sectionType int, start, outTitle string) {
 	numOfPlus := 0
 	for numOfPlus < len(title) && title[numOfPlus] == '+' {
 		numOfPlus++
 	}
-	if numOfPlus < 1 || numOfPlus > len(kTitleNames) {
+	if numOfPlus < 1 || numOfPlus > len(kSectionNames) {
 		log.Fatalf("Unknown title: %s.", title)
 	}
 	outTitle = title[numOfPlus:]
@@ -98,10 +111,8 @@ func GetChapterStart(title string) (start, titleName, outTitle string) {
 	} else {
 		start = ""
 	}
-	titleName = kTitleNames[numOfPlus-1]
-	start += fmt.Sprintf(
-		`\phantomsection
-\%s{%s}`, titleName, outTitle)
+	sectionType = numOfPlus-1
+	start += `\phantomsection`
 	return
 }
 
@@ -136,7 +147,7 @@ func ConvertToTex(input, output string) {
 	fmt.Fprintln(outputFile, `\XeTeXlinebreaklocale "zh"`)
 	fmt.Fprintln(outputFile, `\XeTeXlinebreakskip 0pt plus 1pt`)
 	fmt.Fprintln(outputFile, `\setcounter{secnumdepth}{-1}`)
-	fmt.Fprintln(outputFile, `\setcounter{tocdepth}{0}`)
+	fmt.Fprintln(outputFile, `\setcounter{tocdepth}{2}`)
 	fmt.Fprintln(outputFile, `\linespread{1.2}`)
 	fmt.Fprintln(outputFile, `\setlength{\parindent}{3em}`)
 	fmt.Fprintln(outputFile, `\sloppy`)
@@ -145,7 +156,8 @@ func ConvertToTex(input, output string) {
 	var title string
 	var author string
 	const kTableMarker = "---"
-	var chapterCounters = make(map[string]int)
+	var sectionTypeToCount [len(kSectionNames)]int;
+	var sectionTypeToTitle [len(kSectionNames)]string;
 	for inputScanner.Scan() {
 		line := strings.TrimSpace(inputScanner.Text())
 		if len(line) == 0 {
@@ -198,10 +210,20 @@ func ConvertToTex(input, output string) {
 			fmt.Fprintln(outputFile, `\end{scriptsize}`)
 			fmt.Fprintln(outputFile, `\par`)
 		} else if line[0] == '+' {
-			start, name, title := GetChapterStart(line)
-			chapterCounters[name]++
-			fmt.Printf("%s %d: %s\n", name, chapterCounters[name], title)
-			fmt.Fprintln(outputFile, start)
+			sectionType, start, title := ParseTitleLine(line)
+			sectionTypeName := kSectionNames[sectionType]
+			if sectionTypeToTitle[sectionType] == title {
+				fmt.Printf("Ignoring %s: %s\n", sectionTypeName, title)
+				continue
+			}
+			sectionTypeToTitle[sectionType] = title
+			sectionTypeToCount[sectionType]++
+			for i := sectionType + 1; i < len(kSectionNames); i++ {
+				sectionTypeToTitle[i] = ""
+				sectionTypeToCount[i] = 0
+			}
+			fmt.Printf("%s %d: %s\n", sectionTypeName, sectionTypeToCount[sectionType], title)
+			fmt.Fprintf(outputFile, "%s\n\\%s{%s}\n", start, sectionTypeName, title)
 		} else {
 			fmt.Fprintln(outputFile, "\\par\n"+line)
 		}
