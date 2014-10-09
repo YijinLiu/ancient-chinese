@@ -146,6 +146,8 @@ func ConvertToTex(input, output string) {
 	fmt.Fprintf(outputFile, "\\newCJKfontfamily[kai]\\kaiti{%s}\n", *titleFontName)
 	fmt.Fprintln(outputFile, `\XeTeXlinebreaklocale "zh"`)
 	fmt.Fprintln(outputFile, `\XeTeXlinebreakskip 0pt plus 1pt`)
+	fmt.Fprintln(outputFile, `\usepackage{fancyhdr}`)
+	fmt.Fprintln(outputFile, `\pagestyle{fancy}`)
 	fmt.Fprintln(outputFile, `\setcounter{secnumdepth}{-1}`)
 	fmt.Fprintln(outputFile, `\setcounter{tocdepth}{2}`)
 	fmt.Fprintln(outputFile, `\linespread{1.2}`)
