@@ -182,7 +182,7 @@ func ConvertToTex(input, output string) {
 	fmt.Fprintln(outputFile, `\setcounter{secnumdepth}{-1}`)
 	fmt.Fprintln(outputFile, `\setcounter{tocdepth}{2}`)
 	fmt.Fprintln(outputFile, `\linespread{1.2}`)
-	fmt.Fprintln(outputFile, `\setlength{\parindent}{3em}`)
+	fmt.Fprintln(outputFile, `\setlength{\parindent}{3.2em}`)
 	fmt.Fprintln(outputFile, `\sloppy`)
 	fmt.Fprintln(outputFile, `\begin{document}`)
 
