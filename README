@@ -3,7 +3,7 @@ We provide converters written in Go programming language to convert the
 books to other format like pdf.
 
 
-Rules:
+Text file rules:
 1. All text files go under txt sub folder and Go code under go sub folder.
 2. Only a subset of ASCII characters are allowed in file names, including lowcase letters, numbers, - (dash) and . (dot).
 3. Use pinyin to replace Chinese character in file names. For example, "shiji" for "史记".
@@ -11,8 +11,18 @@ Rules:
    Prefer ".txt" extension.
    e.g.  shiji-simplified.txt shiji-traditional.txt
 4. All files are encoded with UTF8, W/O BOM byte.
-5. All Go code need to formated with gofmt.
-6. Every Go source file should have minimal comment explaining how to use the code.
+5. Rare characters are represented by multiple characters, enclosed by half-width parentheses.
+   e.g.
+     (土慮)   -- left & right composition.
+     (/窮)   -- / means up & down composition.
+     (𠂆*圭)  -- * means outside / inside composition.
+   NOTE: Rare characters are defined by that they are not included in
+   HanaMin(花園明朝) font, see http://www.zdic.net/appendix/f18.htm
+6. Comments are put inside （）.
+
+Go code rules:
+1. All Go code need to formated with gofmt.
+2. Every Go source file should have minimal comment explaining how to use the code.
 
 
 Format of text files:
