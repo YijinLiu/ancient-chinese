@@ -112,7 +112,7 @@ func ParseTitleLine(title string) (sectionType int, start, outTitle string) {
 	} else {
 		start = ""
 	}
-	sectionType = numOfPlus-1
+	sectionType = numOfPlus - 1
 	start += `\phantomsection`
 	return
 }
@@ -136,7 +136,7 @@ func ReplaceCommentWithScript(text string) string {
 			log.Fatalf("Invalid comment: %s\n", text)
 		}
 		buffer.WriteString(fmt.Sprintf(`{\scriptsize %s}`, text[start:end]))
-		text = text[end + len(kCommentEnd):]
+		text = text[end+len(kCommentEnd):]
 		if len(text) == 0 {
 			break
 		}
@@ -189,8 +189,8 @@ func ConvertToTex(input, output string) {
 	var title string
 	var author string
 	const kTableMarker = "---"
-	var sectionTypeToCount [len(kSectionNames)]int;
-	var sectionTypeToTitle [len(kSectionNames)]string;
+	var sectionTypeToCount [len(kSectionNames)]int
+	var sectionTypeToTitle [len(kSectionNames)]string
 	for inputScanner.Scan() {
 		line := strings.TrimSpace(inputScanner.Text())
 		if len(line) == 0 {
@@ -203,6 +203,7 @@ func ConvertToTex(input, output string) {
 			log.Printf("Author: %s\n", author)
 			fmt.Fprintln(outputFile, GetTitlePage(title, author))
 			fmt.Fprintln(outputFile, `\tableofcontents{}`)
+			fmt.Fprintln(outputFile, `\newpage`)
 		} else if line == kTableMarker {
 			var tableRows []string
 			for inputScanner.Scan() {
@@ -258,7 +259,7 @@ func ConvertToTex(input, output string) {
 			fmt.Printf("%s %d: %s\n", sectionTypeName, sectionTypeToCount[sectionType], title)
 			fmt.Fprintf(outputFile, "%s\n\\%s{%s}\n", start, sectionTypeName, ReplaceCommentWithScript(title))
 		} else {
-			fmt.Fprintln(outputFile, "\\par\n" + ReplaceCommentWithScript(line))
+			fmt.Fprintln(outputFile, "\\par\n"+ReplaceCommentWithScript(line))
 		}
 
 	}
