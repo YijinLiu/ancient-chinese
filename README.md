@@ -74,13 +74,9 @@ This project contains ancient Chinese books in plain text. We provide converters
 4. All files are encoded with UTF8, W/O BOM byte.
 5. Rare characters are represented by multiple characters, enclosed by half-width parentheses. e.g.
 
------------------------------------------------------
-| (土慮)  | left & right composition.               |   
------------------------------------------------------
-| (/窮)  | `/` means up & down composition.        |
------------------------------------------------------
-| (𠂆*圭) | `*` means outside / inside composition. |
------------------------------------------------------
+(土慮)  | left & right composition.
+(/窮)  | `/` means up & down composition.
+(𠂆*圭) | `*` means outside / inside composition.
 
    NOTE: Rare characters are defined by that they are not included in HanaMin(花園明朝) font, see http://www.zdic.net/appendix/f18.htm 
 6. Comments are put inside `（）`. 
@@ -115,8 +111,8 @@ Note:
 ## FAQs
 * Q: Why use text files? 
 
-A: Text files save disk space. Most importantly, it's easy to edit text files and we can use source control system to record the change history of files. We require minimal formating in the text files and use Tex to format the books for different devices. 
+  A: Text files save disk space. Most importantly, it's easy to edit text files and we can use source control system to record the change history of files. We require minimal formating in the text files and use Tex to format the books for different devices. 
 
 * Q: Why use golang? 
 
-A: No special reason. The author would like to try this relatively new language, which is cool and very concise. 
+  A: No special reason. The author would like to try this relatively new language, which is cool and very concise. 
