@@ -21,6 +21,7 @@ $ cd ancient-chinese
 <pre>
 $ sudo mkdir /usr/share/fonts/truetype/chinese/
 $ sudo cp fonts/* /usr/share/fonts/truetype/chinese/
+$ fc-cache
 </pre>
 5. Compile ancient-chinese:
 <pre>
@@ -56,9 +57,9 @@ shiji-traditional.txt
 4. All files are encoded with UTF8, W/O BOM byte.
 5. Rare characters are represented by multiple characters, enclosed by half-width parentheses. e.g.
 <pre>
-(土慮)  --- left & right composition.
+(土慮)   --- left & right composition.
 (/窮)  --- `/` means up & down composition.
-(𠂆\*圭) --- `\*` means outside / inside composition.
+(𠂆\*圭)  --- `\*` means outside / inside composition.
 </pre>
    NOTE: Rare characters are defined by that they are not included in HanaMin(花園明朝) font, see http://www.zdic.net/appendix/f18.htm 
 6. Comments are put inside `（）`. 
