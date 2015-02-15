@@ -13,10 +13,15 @@
 // Please refer to fc-cache about how to install new font.
 // Run fc-list to find installed fonts.
 //
-// Use xelatex to convert TeX to PDF.
-// You need at least the following packages to run xelatex:
-//     sudo apt-get install texlive-xetex texlive-lang-cjk cjk-latex
-// Suggest to use https://www.tug.org/texlive/acquire-netinstall.html.
+// Use xelatex to convert TeX to PDF:
+//   for i in 1 2 3 ; do xelatex
+//     shiji-simplified.tex
+//   done
+// We need to run xelatex 3 times to generate the correct TOC.
+// Please see https://www.tug.org/texlive/acquire-netinstall.html about how to
+// install xelatex.
+
+// See the top level README file for detailed manual.
 
 package main
 

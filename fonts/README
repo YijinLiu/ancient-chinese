@@ -1,0 +1,4 @@
+How to install:
+1. $ sudo mkdir /usr/share/fonts/truetype/chinese/
+2. $fc-cache
+3. run fc-list to check the fonts have been installed correctly.

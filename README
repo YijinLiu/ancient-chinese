@@ -3,6 +3,37 @@ We provide converters written in Go programming language to convert the
 books to other format like pdf.
 
 
+MANUAL:
+1. Install golang, git:
+  $ sudo apt-get install golang-go git
+2. Install texlive: https://www.tug.org/texlive/acquire-netinstall.html
+  After installation (takes hours!), add the bin folder to path, like
+  $ export PATH=/usr/local/texlive/2014/bin/x86_64-linux:$PATH
+  NOTE: Your installation path might be different. Use "ls /usr/local/texlive"
+  to find yours.
+  You can put the above export command in ~/.bashrc to run it automatically.
+3. Download source code of project ancient-chinese:
+  $ git clone https://code.google.com/p/ancient-chinese
+  $ cd ancient-chinese
+4. Install fonts:
+  $ sudo mkdir /usr/share/fonts/truetype/chinese/
+  $ sudo cp fonts/* /usr/share/fonts/truetype/chinese/
+5. Compile ancient-chinese:
+  $ cd go
+  $ go install tex
+6. Convert txt to tex format:
+  $ cd ../txt
+  $ ../go/bin/tex shiji-simplified.txt
+7. Convert tex to pdf format:
+  $ for i in 1 2 3 ; do xelatex shiji-simplified.txt ; done
+  NOTE: We need to xelatex three times to correctly generate TOC (table of
+  content):
+  1st run: generate all pages w/o TOC.
+  2nd run: generate TOC and all pages w/o correct page numbers.
+  3nd run: generate TOC and all pagew w/ correct page numbers.
+  You don't need to worry about these details, Just run xelatex three times.
+ 
+
 Text file rules:
 1. All text files go under txt sub folder and Go code under go sub folder.
 2. Only a subset of ASCII characters are allowed in file names, including lowcase letters, numbers, - (dash) and . (dot).
