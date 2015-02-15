@@ -37,9 +37,11 @@ $ ../go/bin/tex shiji-simplified.txt
 $ for i in 1 2 3 ; do xelatex shiji-simplified.txt ; done
 </pre>
   NOTE: We need to xelatex three times to correctly generate TOC (table of content):
-* 1st run: generate all pages w/o TOC.
-* 2nd run: generate TOC and all pages w/o correct page numbers.
-* 3nd run: generate TOC and all pagew w/ correct page numbers.
+
+  * 1st run: generate all pages w/o TOC.
+  * 2nd run: generate TOC and all pages w/o correct page numbers.
+  * 3nd run: generate TOC and all pagew w/ correct page numbers.
+
   You don't need to worry about these details, Just run xelatex three times.
 
 
@@ -54,9 +56,9 @@ shiji-traditional.txt
 4. All files are encoded with UTF8, W/O BOM byte.
 5. Rare characters are represented by multiple characters, enclosed by half-width parentheses. e.g.
 <pre>
-(土慮)  - left & right composition.
-(/窮)  - `/` means up & down composition.
-(𠂆*圭) - `*` means outside / inside composition.
+(土慮)  --- left & right composition.
+(/窮)  --- `/` means up & down composition.
+(𠂆*圭) --- `**` means outside / inside composition.
 </pre>
    NOTE: Rare characters are defined by that they are not included in HanaMin(花園明朝) font, see http://www.zdic.net/appendix/f18.htm 
 6. Comments are put inside `（）`. 
@@ -89,7 +91,7 @@ Note:
 
 ## FAQs
 * Q: Why use text files?<br/>
-  A: Text files save disk space. Most importantly, it's easy to edit text files and we can use source control system to record the change history of files. We require minimal formating in the text files and use Tex to format the books for different devices. 
+   A: Text files save disk space. Most importantly, it's easy to edit text files and we can use source control system to record the change history of files. We require minimal formating in the text files and use Tex to format the books for different devices. 
 
 * Q: Why use golang?<br/>
-  A: No special reason. The author would like to try this relatively new language, which is cool and very concise. 
+   A: No special reason. The author would like to try this relatively new language, which is cool and very concise. 
