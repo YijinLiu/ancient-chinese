@@ -58,7 +58,7 @@ shiji-traditional.txt
 <pre>
 (土慮)  --- left & right composition.
 (/窮)  --- `/` means up & down composition.
-(𠂆*圭) --- `**` means outside / inside composition.
+(𠂆**圭) --- `**` means outside / inside composition.
 </pre>
    NOTE: Rare characters are defined by that they are not included in HanaMin(花園明朝) font, see http://www.zdic.net/appendix/f18.htm 
 6. Comments are put inside `（）`. 
