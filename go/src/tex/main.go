@@ -188,6 +188,8 @@ func ConvertToTex(input, output string) {
 	fmt.Fprintln(outputFile, `\setcounter{tocdepth}{2}`)
 	fmt.Fprintln(outputFile, `\linespread{1.2}`)
 	fmt.Fprintln(outputFile, `\setlength{\parindent}{3.2em}`)
+	fmt.Fprintln(outputFile, `\setlength{\parskip}{0pt}`)
+	fmt.Fprintln(outputFile, `\setlength{\parsep}{0pt}`)
 	fmt.Fprintln(outputFile, `\sloppy`)
 	fmt.Fprintln(outputFile, `\begin{document}`)
 
