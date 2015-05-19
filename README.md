@@ -35,7 +35,7 @@ $ ../go/bin/tex shiji-simplified.txt
 </pre>
 7. Convert tex to pdf format:
 <pre>
-$ for i in 1 2 3 ; do xelatex shiji-simplified.txt ; done
+$ for i in 1 2 3 ; do xelatex shiji-simplified.tex ; done
 </pre>
   NOTE: We need to xelatex three times to correctly generate TOC (table of content):
 
