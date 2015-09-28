@@ -72,7 +72,7 @@ func GetTitlePage(title, author string) string {
 \vspace*{\fill}
 \emph{\textbf{\Huge{\kaiti %s}}}\\[0.5cm]
 {\normalsize %s}\\[1.5cm]
-{\small\url{https://code.google.com/p/ancient-chinese}}\\
+{\small\url{https://github.com/YijinLiu/ancient-chinese}}\\
 {\small\today}
 \vspace*{\fill}
 \end{center}
