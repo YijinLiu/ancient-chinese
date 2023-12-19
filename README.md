@@ -8,9 +8,9 @@ This project contains ancient Chinese books in plain text. We provide converters
 $ sudo apt-get install golang-go git
 </pre>
 2. Install [texlive](https://www.tug.org/texlive/acquire-netinstall.html). After installation (takes hours!), add the bin folder to path, like
-<pre>
-$ export PATH=/usr/local/texlive/2014/bin/x86_64-linux:$PATH
-</pre>
+```
+$ export PATH=/usr/local/texlive/2023/bin/x86_64-linux:$PATH
+```
   NOTE: Your installation path might be different. Use "ls /usr/local/texlive" to find yours. You can put the above export command in ~/.bashrc to run it automatically.
 3. Download source code of project ancient-chinese:
 <pre>
@@ -24,10 +24,10 @@ $ sudo cp fonts/* /usr/share/fonts/truetype/chinese/
 $ fc-cache
 </pre>
 5. Compile ancient-chinese:
-<pre>
-$ cd go
-$ go install tex
-</pre>
+```
+$ cd go/src
+$ GOPATH=$(realpath ..) go install github.com/yijinliu/ancient_chinese/tex
+```
 6. Convert txt to tex format:
 <pre>
 $ cd ../txt

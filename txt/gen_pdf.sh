@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 for name in $@
 do
   echo -e "\e[0;32mProcessing book ${name} ...\e[0m"
